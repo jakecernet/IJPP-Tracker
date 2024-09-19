@@ -1,1 +1,292 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"/><link rel="icon" href="./favicon.ico"/><meta name="viewport" content="width=device-width,initial-scale=1"/><meta name="theme-color" content="#000000"/><meta name="description" content="Web site created using create-react-app"/><link rel="apple-touch-icon" href="./logo192.png"/><link rel="manifest" href="./manifest.json"/><title>React App</title><script defer="defer" src="./static/js/main.fd3de175.js"></script><link href="./static/css/main.554c3402.css" rel="stylesheet"></head><body><noscript>You need to enable JavaScript to run this app.</noscript><div id="root"></div></body></html>
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>TrackTransit - Never Miss Your Ride Again</title>
+		<script src="https://cdn.tailwindcss.com"></script>
+		<link
+			href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+			rel="stylesheet" />
+		<style>
+			body {
+				font-family: "Inter", sans-serif;
+			}
+		</style>
+	</head>
+	<body class="min-h-screen bg-gradient-to-b from-blue-100 to-green-100">
+		<section
+            class="flex container mx-auto px-4 py-16 text-center flex-col md:flex-row items-center justify-evenly">
+			<div>
+				<h1 class="text-4xl font-bold mb-4 text-blue-600">
+					IJPP Tracker
+				</h1>
+				<p class="text-2xl mb-8 text-gray-700">
+					Never miss your ride again!
+				</p>
+				<div
+					class="flex justify-center space-x-4 md:flex-row items-center">
+					<a
+						href="#"
+						class="bg-black text-white hover:bg-gray-800 px-6 py-3 rounded-lg flex items-center">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							class="h-5 w-5 mr-2"
+							viewBox="0 0 20 20"
+							fill="currentColor">
+							<path
+								d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+						</svg>
+						App Store
+					</a>
+					<a
+						href="/app"
+						class="bg-green-600 text-white hover:bg-green-700 px-6 py-3 rounded-lg flex items-center">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							class="h-5 w-5 mr-2"
+							viewBox="0 0 20 20"
+							fill="currentColor">
+							<path
+								fill-rule="evenodd"
+								d="M10 2a1 1 0 011 1v1.323l3.954 1.582 1.599-.8a1 1 0 01.894 1.79l-1.233.616 1.738 5.42a1 1 0 01-.285 1.05A3.989 3.989 0 0115 15a3.989 3.989 0 01-2.667-1.019 1 1 0 01-.285-1.05l1.715-5.349L11 6.477V16h2a1 1 0 110 2H7a1 1 0 110-2h2V6.477L6.237 7.582l1.715 5.349a1 1 0 01-.285 1.05A3.989 3.989 0 015 15a3.989 3.989 0 01-2.667-1.019 1 1 0 01-.285-1.05l1.738-5.42-1.233-.616a1 1 0 01.894-1.79l1.599.8L9 4.323V3a1 1 0 011-1z"
+								clip-rule="evenodd" />
+						</svg>
+						Try it in Browser
+					</a>
+				</div>
+			</div>
+			<div>
+				<img
+					src="./app-screen.png"
+					alt="TrackTransit App Screenshot"
+					class="mt-12 rounded-lg shadow-xl mx-auto md:mx-0" />
+			</div>
+		</section>
+		<!-- Key Features Section -->
+		<section class="bg-white py-16">
+			<div class="container mx-auto px-4">
+				<h2 class="text-3xl font-bold mb-12 text-center text-gray-800">
+					Key Features
+				</h2>
+				<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+					<div class="bg-white p-6 rounded-lg shadow-md text-center">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							class="h-12 w-12 mx-auto mb-4 text-blue-500"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke="currentColor">
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+						</svg>
+						<h3 class="text-xl font-semibold mb-2">
+							Real-time Tracking
+						</h3>
+						<p class="text-gray-600">
+							See exactly where your bus or train is in real-time.
+						</p>
+					</div>
+					<div class="bg-white p-6 rounded-lg shadow-md text-center">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							class="h-12 w-12 mx-auto mb-4 text-blue-500"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke="currentColor">
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+						</svg>
+						<h3 class="text-xl font-semibold mb-2">
+							Arrival Alerts
+						</h3>
+						<p class="text-gray-600">
+							Get notified when your ride is approaching.
+						</p>
+					</div>
+					<div class="bg-white p-6 rounded-lg shadow-md text-center">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							class="h-12 w-12 mx-auto mb-4 text-blue-500"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke="currentColor">
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+						</svg>
+						<h3 class="text-xl font-semibold mb-2">
+							Route Planning
+						</h3>
+						<p class="text-gray-600">
+							Plan your journey with multiple transportation
+							options.
+						</p>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- How It Works Section -->
+		<section class="py-16">
+			<div class="container mx-auto px-4">
+				<h2 class="text-3xl font-bold mb-12 text-center text-gray-800">
+					How It Works
+				</h2>
+				<div
+					class="flex flex-col md:flex-row items-center justify-center space-y-8 md:space-y-0 md:space-x-12">
+					<div class="text-center">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							class="h-16 w-16 mx-auto mb-4 text-green-500"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke="currentColor">
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+						</svg>
+						<h3 class="text-xl font-semibold mb-2">
+							1. Download the App
+						</h3>
+						<p class="text-gray-600">
+							Get TrackTransit from your app store.
+						</p>
+					</div>
+					<div class="text-center">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							class="h-16 w-16 mx-auto mb-4 text-green-500"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke="currentColor">
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+						</svg>
+						<h3 class="text-xl font-semibold mb-2">
+							2. Find Your Route
+						</h3>
+						<p class="text-gray-600">
+							Search for your bus or train line.
+						</p>
+					</div>
+					<div class="text-center">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							class="h-16 w-16 mx-auto mb-4 text-green-500"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke="currentColor">
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+						</svg>
+						<h3 class="text-xl font-semibold mb-2">
+							3. Track in Real-time
+						</h3>
+						<p class="text-gray-600">
+							See your ride's location updated live.
+						</p>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Testimonials Section -->
+		<section class="bg-blue-50 py-16">
+			<div class="container mx-auto px-4">
+				<h2 class="text-3xl font-bold mb-12 text-center text-gray-800">
+					What Our Users Say
+				</h2>
+				<div
+					class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+					<div class="bg-white p-6 rounded-lg shadow-md">
+						<p class="mb-4 text-gray-600">
+							"TrackTransit has made my daily commute so much
+							easier. I always know exactly when my bus will
+							arrive!"
+						</p>
+						<p class="font-semibold">- Sarah J.</p>
+					</div>
+					<div class="bg-white p-6 rounded-lg shadow-md">
+						<p class="mb-4 text-gray-600">
+							"I love the route planning feature. It's helped me
+							discover faster ways to get around the city."
+						</p>
+						<p class="font-semibold">- Mike T.</p>
+					</div>
+					<div class="bg-white p-6 rounded-lg shadow-md">
+						<p class="mb-4 text-gray-600">
+							"The real-time tracking is a game-changer. No more
+							waiting endlessly at the bus stop!"
+						</p>
+						<p class="font-semibold">- Emily R.</p>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Call-to-Action Section -->
+		<section
+			class="py-16 bg-gradient-to-r from-blue-500 to-green-500 text-white">
+			<div class="container mx-auto px-4 text-center">
+				<h2 class="text-3xl font-bold mb-4">
+					Ready to Transform Your Commute?
+				</h2>
+				<p class="text-xl mb-8">
+					Download TrackTransit now and never miss your ride again!
+				</p>
+				<div class="flex justify-center space-x-4">
+					<a
+						href="#"
+						class="bg-black text-white hover:bg-gray-800 px-6 py-3 rounded-lg flex items-center">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							class="h-5 w-5 mr-2"
+							viewBox="0 0 20 20"
+							fill="currentColor">
+							<path
+								d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+						</svg>
+						App Store
+					</a>
+					<a
+						href="/app"
+						class="bg-white text-green-600 hover:bg-gray-100 px-6 py-3 rounded-lg flex items-center">
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							class="h-5 w-5 mr-2"
+							viewBox="0 0 20 20"
+							fill="currentColor">
+							<path
+								fill-rule="evenodd"
+								d="M10 2a1 1 0 011 1v1.323l3.954 1.582 1.599-.8a1 1 0 01.894 1.79l-1.233.616 1.738 5.42a1 1 0 01-.285 1.05A3.989 3.989 0 0115 15a3.989 3.989 0 01-2.667-1.019 1 1 0 01-.285-1.05l1.715-5.349L11 6.477V16h2a1 1 0 110 2H7a1 1 0 110-2h2V6.477L6.237 7.582l1.715 5.349a1 1 0 01-.285 1.05A3.989 3.989 0 015 15a3.989 3.989 0 01-2.667-1.019 1 1 0 01-.285-1.05l1.738-5.42-1.233-.616a1 1 0 01.894-1.79l1.599.8L9 4.323V3a1 1 0 011-1z"
+								clip-rule="evenodd" />
+						</svg>
+						Try it in Browser
+					</a>
+				</div>
+			</div>
+		</section>
+	</body>
+</html>
