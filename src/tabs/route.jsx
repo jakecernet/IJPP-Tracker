@@ -108,10 +108,7 @@ const RouteTab = ({
 					!!selectedVehicle?.tripId &&
 					bus.tripId === selectedVehicle.tripId,
 				label:
-					bus.busName ||
-					bus.lineDestination ||
-					bus.lineName ||
-					"Bus",
+					bus.busName || bus.lineDestination || bus.lineName || "Bus",
 			});
 		});
 
@@ -171,8 +168,8 @@ const RouteTab = ({
 		if (etaMin === undefined) return "";
 		const timeStr = date && !isNaN(date) ? formatTime(date) : "N/A";
 		return etaMin >= 60
-			? `${Math.floor(etaMin / 60)}h ${etaMin % 60}m (${timeStr})`
-			: `${etaMin} min (${timeStr})`;
+			? `${Math.floor(etaMin / 60)}h ${etaMin % 60}m \n(${timeStr})`
+			: `${etaMin} min\n(${timeStr})`;
 	};
 
 	const formatSZETA = (time) => {
@@ -182,8 +179,8 @@ const RouteTab = ({
 		const etaMin = Math.max(0, Math.round((date - Date.now()) / 60000));
 		const timeStr = formatTime(date);
 		return etaMin >= 60
-			? `${Math.floor(etaMin / 60)}h ${etaMin % 60}m (${timeStr})`
-			: `${etaMin} min (${timeStr})`;
+			? `${Math.floor(etaMin / 60)}h ${etaMin % 60}m \n(${timeStr})`
+			: `${etaMin} min \n(${timeStr})`;
 	};
 
 	const lineName =
@@ -235,98 +232,111 @@ const RouteTab = ({
 							).filter((bus) => !bus.isSelf);
 
 							return (
-							<li
-								key={stop.gtfsId || stop.stopId || key}
-								className={
-									"stop" +
-									(isFirst ? " stop--first" : "") +
-									(isLast ? " stop--last" : "") +
-									(isPassed ? " stop--passed" : "") +
-									(isCurrent ? " stop--current" : "")
-								}
-								onClick={() => {
-									const payload = {
-										name: stop.name,
-										coordinates: stop.gpsLocation,
-										id:
-											stop.gtfsId ||
-											stop.stopId ||
-											stop.name,
-										gtfs_id: stop.gtfsId,
-										gtfsId: stop.gtfsId,
-										stopId: stop.stopId,
-										station_code: stop.stopId,
-										type: isSZ ? "train-stop" : "bus-stop",
-									};
-									setActiveStation(payload);
-									localStorage.setItem(
-										"activeStation",
-										JSON.stringify(payload),
-									);
-									window.location.hash = "/lines";
-								}}>
-								<span className="stop__track" aria-hidden="true">
-									<span className="stop__dot" />
-									{busesHere.length > 0 && (
-										<span className="stop__buses">
-											{busesHere.map((bus) => (
-												<span
-													key={bus.key}
-													className="stop__bus"
-													title={bus.label}
-												/>
-											))}
+								<li
+									key={stop.gtfsId || stop.stopId || key}
+									className={
+										"stop" +
+										(isFirst ? " stop--first" : "") +
+										(isLast ? " stop--last" : "") +
+										(isPassed ? " stop--passed" : "") +
+										(isCurrent ? " stop--current" : "")
+									}
+									onClick={() => {
+										const payload = {
+											name: stop.name,
+											coordinates: stop.gpsLocation,
+											id:
+												stop.gtfsId ||
+												stop.stopId ||
+												stop.name,
+											gtfs_id: stop.gtfsId,
+											gtfsId: stop.gtfsId,
+											stopId: stop.stopId,
+											station_code: stop.stopId,
+											type: isSZ
+												? "train-stop"
+												: "bus-stop",
+										};
+										setActiveStation(payload);
+										localStorage.setItem(
+											"activeStation",
+											JSON.stringify(payload),
+										);
+										window.location.hash = "/lines";
+									}}>
+									<span
+										className="stop__track"
+										aria-hidden="true">
+										<span className="stop__dot" />
+										{busesHere.length > 0 && (
+											<span className="stop__buses">
+												{busesHere.map((bus) => (
+													<span
+														key={bus.key}
+														className="stop__bus"
+														title={bus.label}
+													/>
+												))}
+											</span>
+										)}
+									</span>
+									<h3>{stop.name}</h3>
+									{!isLPP && !isSZ && (
+										<p
+                                            style={{ marginRight: "10px" }}
+                                        >
+											{formatArrivalTime(stop?.departure)}
+										</p>
+									)}
+									{isLPP && (
+										<span
+											style={{
+												display: "flex",
+												flexDirection: "row",
+												gap: "20px",
+												whiteSpace: "pre-line",
+												textAlign: "center",
+                                                marginRight: "10px",
+											}}>
+											{stop.arrivals?.[0] && (
+												<p>
+													{formatArrivalTime(
+														stop.arrivals[0],
+													)}
+												</p>
+											)}
+											{stop.arrivals?.[1] && (
+												<p>
+													{formatArrivalTime(
+														stop.arrivals[1],
+													)}
+												</p>
+											)}
 										</span>
 									)}
-								</span>
-								<h3>{stop.name}</h3>
-								{!isLPP && !isSZ && (
-									<p>{formatArrivalTime(stop?.departure)}</p>
-								)}
-								{isLPP && (
-									<span
-										style={{
-											display: "flex",
-											flexDirection: "row",
-											gap: "20px",
-										}}>
-										{stop.arrivals?.[0] && (
-											<p>
-												{formatArrivalTime(
-													stop.arrivals[0],
-												)}
-											</p>
-										)}
-										{stop.arrivals?.[1] && (
-											<p>
-												{formatArrivalTime(
-													stop.arrivals[1],
-												)}
-											</p>
-										)}
-										{stop.arrivals?.[2] && (
-											<p>
-												{formatArrivalTime(
-													stop.arrivals[2],
-												)}
-											</p>
-										)}
-									</span>
-								)}
-								{isSZ && (
-									<span
-										style={{
-											display: "flex",
-											gap: "20px",
-										}}>
-										{stop.departure ? (
-											<p>{formatSZETA(stop.departure)}</p>
-										) : (
-											<p>{formatSZETA(stop.arrival)}</p>
-										)}
-									</span>
-								)}
-							</li>
+									{isSZ && (
+										<span
+											style={{
+												display: "flex",
+												gap: "20px",
+                                                textAlign: "center",
+                                                whiteSpace: "pre-line",
+                                                marginRight: "10px",
+											}}>
+											{stop.departure ? (
+												<p>
+													{formatSZETA(
+														stop.departure,
+													)}
+												</p>
+											) : (
+												<p>
+													{formatSZETA(stop.arrival)}
+												</p>
+											)}
+										</span>
+									)}
+								</li>
 							);
 						})
 					) : (

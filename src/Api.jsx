@@ -204,7 +204,7 @@ export function formatPrecomputedArrival(arrival) {
 	} else {
 		etaDisplay = `${etaMin} min`;
 	}
-	return `${etaDisplay} (${timeStr})`;
+	return `${etaDisplay} \n(${timeStr})`;
 }
 
 /**
@@ -831,6 +831,7 @@ const fetchLppArrivals = async (stationCode) => {
 					vehicleId: arrival.vehicle_id,
 					type: arrival.type,
 					depot: arrival.depot,
+                    operatorName: "Ljubljanski potniški promet d.o.o.",
 				};
 			})
 			.sort((a, b) => (a.etaMinutes ?? 999) - (b.etaMinutes ?? 999));
@@ -944,6 +945,7 @@ const fetchSzArrivals = async (stationCode) => {
 					departureDelay,
 					etaMinutes: etaData.etaMinutes,
 					arrivalTime: etaData.arrivalTime,
+                    operatorName: "Slovenske železnice d.o.o.",
 				};
 			});
 	} catch (error) {

@@ -112,18 +112,31 @@ const ArrivalItem = memo(({ arrival, onRouteClick }) => (
 		<div className="left">
 			<div className="circle" style={{ background: bgColorMap(arrival) }}>
 				<h2
-					style={{
-						fontSize: arrival.type === "SZ" ? 16 : 20,
-						fontWeight: "bold",
-					}}>
+					className={
+						arrival.type === "SZ"
+							? "sz"
+							: arrival.type === "LPP"
+								? "lpp"
+								: ""
+					}>
 					{arrival.type === "LPP"
 						? arrival.routeName
 						: arrival.routeShortName || arrival.tripName}
 				</h2>
 			</div>
-			<h3>{arrival.tripName || arrival.headsign}</h3>
+			<div className="info">
+				<h3>{arrival.tripName || arrival.headsign}</h3>
+				<h4>{arrival.operatorName}</h4>
+			</div>
 		</div>
-		<p>{formatPrecomputedArrival(arrival)}</p>
+		<p
+			style={{
+				whiteSpace: "pre-line",
+				textAlign: "center",
+				fontSize: "14px",
+			}}>
+			{formatPrecomputedArrival(arrival)}
+		</p>
 		{arrival.type === "SZ" && arrival.realTime && (
 			<p>
 				{"Zamuda: " +

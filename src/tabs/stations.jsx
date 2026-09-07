@@ -37,6 +37,7 @@ const StationItem = memo(
 						</span>
 					)}
 				</div>
+                <br></br>
 				<ul className="station-info">
 					{station?.routes_on_stop
 						?.slice(0, 6)
