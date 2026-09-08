@@ -13,8 +13,8 @@ import {
 	DEFAULT_ZOOM,
 	ICON_SOURCES,
 	operatorToIcon,
-	OSM_RASTER_STYLE_DARK,
-	OSM_RASTER_STYLE_LIGHT,
+	OSM_STYLE_DARK,
+	OSM_STYLE_LIGHT,
 } from "./map/config";
 import {
 	toGeoJSONPoints,
@@ -45,10 +45,10 @@ import userPNG from "../img/user.png";
 import locationPNG from "../img/location.png";
 
 const getMapStyle = () => {
-	if (typeof window === "undefined") return OSM_RASTER_STYLE_LIGHT;
+	if (typeof window === "undefined") return OSM_STYLE_LIGHT;
 	return localStorage.getItem("mapTheme") === "dark"
-		? OSM_RASTER_STYLE_DARK
-		: OSM_RASTER_STYLE_LIGHT;
+		? OSM_STYLE_DARK
+		: OSM_STYLE_LIGHT;
 };
 
 function refreshMarker({ map, markersRef, key, coords, img, size, popup }) {

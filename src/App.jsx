@@ -14,7 +14,7 @@ import {
 	Route,
 	useLocation,
 } from "react-router-dom";
-import { Map, BusFront, Route as RouteIcon, Settings2 } from "lucide-react";
+import { Map, Route as RouteIcon, Settings2, TramFront } from "lucide-react";
 import "./App.css";
 
 import {
@@ -608,7 +608,7 @@ function App() {
 					</NavLink>
 					<NavLink to="/stations" onClick={clearSelectedVehicle}>
 						<button>
-							<BusFront size={24} />
+							<TramFront size={24} />
 							<h3>Postaje</h3>
 						</button>
 					</NavLink>
