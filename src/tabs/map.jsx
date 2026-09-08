@@ -52,20 +52,36 @@ const getMapStyle = () => {
 };
 
 function refreshMarker({ map, markersRef, key, coords, img, size, popup }) {
-	if (markersRef.current[key]) {
-		markersRef.current[key].remove();
+	const markerState = markersRef.current[key];
+	if (!coords) {
+		markerState?.marker?.remove();
 		markersRef.current[key] = null;
+		return;
 	}
-	if (!coords) return;
+
+	const lngLat = [coords[1], coords[0]];
+	if (markerState?.marker) {
+		if (
+			markerState.coords?.[0] === lngLat[0] &&
+			markerState.coords?.[1] === lngLat[1]
+		) {
+			return;
+		}
+		markerState.marker.setLngLat(lngLat);
+		markerState.coords = lngLat;
+		return;
+	}
 
 	const element = document.createElement("img");
 	element.src = img;
+	element.alt = popup || "";
+	element.decoding = "async";
 	element.style.width = `${size[0]}px`;
 	element.style.height = `${size[1]}px`;
 	element.style.transform = "translate(-50%, -100%)";
 
 	const marker = new maplibregl.Marker({ element, anchor: "bottom" })
-		.setLngLat([coords[1], coords[0]])
+		.setLngLat(lngLat)
 		.addTo(map);
 
 	if (popup) {
@@ -77,7 +93,7 @@ function refreshMarker({ map, markersRef, key, coords, img, size, popup }) {
 		element.style.cursor = "pointer";
 	}
 
-	markersRef.current[key] = marker;
+	markersRef.current[key] = { marker, coords: lngLat };
 }
 
 const Map = React.memo(function Map({
