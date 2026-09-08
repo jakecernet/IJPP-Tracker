@@ -37,6 +37,18 @@ const StationsTab = lazy(() => import("./tabs/stations"));
 const LinesTab = lazy(() => import("./tabs/lines"));
 const SettingsTab = lazy(() => import("./tabs/settings"));
 
+function RouteTracker({ onMapChange, onLinesChange }) {
+	const location = useLocation();
+
+	useEffect(() => {
+		const path = location.pathname;
+		onMapChange(path === "/" || path === "/map" || path === "");
+		onLinesChange(path === "/lines");
+	}, [location.pathname, onMapChange, onLinesChange]);
+
+	return null;
+}
+
 const DEFAULT_VISIBILITY = {
 	buses: true,
 	busStops: true,
@@ -206,59 +218,57 @@ function App() {
 	}, []);
 
 	useEffect(() => {
+		if (!isOnMapTab) return;
+
+		let disposed = false;
+		let requestInFlight = false;
+		let intervalId = null;
+
 		const fetchPositions = async () => {
+			if (disposed || document.hidden || requestInFlight) return;
+			requestInFlight = true;
 			try {
 				const [lpp, ijpp] = await Promise.all([
 					fetchLPPPositions(),
 					fetchIJPPPositions(),
 				]);
-
-				const lppPositions = Array.isArray(lpp) ? lpp : [];
-				const ijppPositions = Array.isArray(ijpp) ? ijpp : [];
-
-				setGpsPositions([...lppPositions, ...ijppPositions]);
+				if (disposed) return;
+				setGpsPositions([
+					...(Array.isArray(lpp) ? lpp : []),
+					...(Array.isArray(ijpp) ? ijpp : []),
+				]);
 			} catch (error) {
-				console.error("Error fetching positions:", error);
+				if (!disposed) console.error("Error fetching positions:", error);
+			} finally {
+				requestInFlight = false;
 			}
 		};
 
-		if (!isOnMapTab) {
-			return;
-		}
-
-		fetchPositions();
-
-		let intervalId;
-
-		const startPolling = () => {
-			intervalId = setInterval(fetchPositions, 3000);
-		};
-
 		const stopPolling = () => {
-			if (intervalId) {
+			if (intervalId !== null) {
 				clearInterval(intervalId);
 				intervalId = null;
 			}
 		};
-
+		const startPolling = () => {
+			stopPolling();
+			if (!document.hidden) intervalId = setInterval(fetchPositions, 3000);
+		};
 		const handleVisibilityChange = () => {
-			if (document.hidden) {
-				stopPolling();
-			} else {
+			if (document.hidden) stopPolling();
+			else {
 				fetchPositions();
 				startPolling();
 			}
 		};
 
+		fetchPositions();
 		document.addEventListener("visibilitychange", handleVisibilityChange);
 		startPolling();
-
 		return () => {
+			disposed = true;
 			stopPolling();
-			document.removeEventListener(
-				"visibilitychange",
-				handleVisibilityChange,
-			);
+			document.removeEventListener("visibilitychange", handleVisibilityChange);
 		};
 	}, [isOnMapTab]);
 
@@ -266,21 +276,31 @@ function App() {
 	useEffect(() => {
 		if (!isOnMapTab) return;
 
+		let disposed = false;
+		let requestInFlight = false;
 		const fetchTrains = async () => {
+			if (disposed || document.hidden || requestInFlight) return;
+			requestInFlight = true;
 			try {
 				const data = await fetchTrainPositions();
-				tripsWithTimingRef.current = data;
+				if (!disposed) tripsWithTimingRef.current = Array.isArray(data) ? data : [];
 			} catch (error) {
-				console.error(
-					"Error fetching train trips for animation:",
-					error,
-				);
+				if (!disposed) console.error("Error fetching train trips for animation:", error);
+			} finally {
+				requestInFlight = false;
 			}
 		};
-
-		fetchTrains();
 		const intervalId = setInterval(fetchTrains, 30000);
-		return () => clearInterval(intervalId);
+		const onVisibilityChange = () => {
+			if (!document.hidden) fetchTrains();
+		};
+		fetchTrains();
+		document.addEventListener("visibilitychange", onVisibilityChange);
+		return () => {
+			disposed = true;
+			clearInterval(intervalId);
+			document.removeEventListener("visibilitychange", onVisibilityChange);
+		};
 	}, [isOnMapTab]);
 
 	// black magic za animacijo vlakov
@@ -478,21 +498,6 @@ function App() {
 		);
 	}, [selectedVehicle, getTripFromId]);
 
-	// tracka če je na zemljevidu al na linijah
-	const RouteTracker = useCallback(() => {
-		const location = useLocation();
-
-		useEffect(() => {
-			const path = location.pathname;
-			const onMap = path === "/" || path === "/map" || path === "";
-			const onLines = path === "/lines";
-			setIsOnMapTab(onMap);
-			setIsOnLinesTab(onLines);
-		}, [location.pathname]);
-
-		return null;
-	}, []);
-
 	// neki počist
 	const clearSelectedVehicle = useCallback(
 		() => setSelectedVehicle(null),
@@ -500,8 +505,11 @@ function App() {
 	);
 
 	return (
-		<Router>
-			<RouteTracker />
+			<Router>
+				<RouteTracker
+					onMapChange={setIsOnMapTab}
+					onLinesChange={setIsOnLinesTab}
+				/>
 			<div className={`container ${theme}`}>
 				<div className="content">
 					<div

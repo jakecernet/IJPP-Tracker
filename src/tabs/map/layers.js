@@ -306,7 +306,9 @@ export function setupSourcesAndLayers(map, dataBySource) {
 
 export function updateSourceData(map, id, data) {
 	const source = map.getSource(id);
-	if (source && source.setData) source.setData(data);
+	if (!source?.setData || source.__v0Data === data) return;
+	source.__v0Data = data;
+	source.setData(data);
 }
 
 export function setPrefixVisible(map, prefix, visible) {
@@ -318,7 +320,7 @@ export function setPrefixVisible(map, prefix, visible) {
 		`${prefix}-halo`,
 	];
 	layers.forEach((layerId) => {
-		if (map.getLayer(layerId)) {
+		if (map.getLayer(layerId) && map.getLayoutProperty(layerId, "visibility") !== vis) {
 			map.setLayoutProperty(layerId, "visibility", vis);
 		}
 	});

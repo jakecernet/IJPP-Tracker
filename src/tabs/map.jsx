@@ -92,9 +92,7 @@ const Map = React.memo(function Map({
 	selectedVehicle,
 	routeLoading,
 	visibility,
-	setVisibility,
 	busOperators,
-	setBusOperators,
 	isActive = true,
 }) {
 	const mapRef = useRef(null);
@@ -140,8 +138,10 @@ const Map = React.memo(function Map({
 			sessionStorage.removeItem("openRouteDrawer");
 			setRouteDrawerOpen(true);
 			setRouteDrawerSnap("peek");
-		} catch {}
-	}, []);
+			} catch {
+				// Storage may be unavailable in private browsing.
+			}
+		}, []);
 
 	const selectedVehicleKey = useMemo(() => {
 		if (!selectedVehicle) return null;
@@ -288,9 +288,11 @@ const Map = React.memo(function Map({
 			startTranslateY: startTranslate,
 		};
 
-		try {
-			e.currentTarget.setPointerCapture(e.pointerId);
-		} catch {}
+			try {
+				e.currentTarget.setPointerCapture(e.pointerId);
+			} catch {
+				// Pointer capture is not available in every browser.
+			}
 	};
 
 	const onRouteDrawerPointerMove = (e) => {
@@ -608,9 +610,11 @@ const Map = React.memo(function Map({
 					'<div style="display: flex; align-items: center; justify-content: center; height: 100%; background: #f5f5f5;"><div style="text-align: center;"><p style="margin: 0; color: #333; font-size: 16px;">Zemljevid se ne more naložiti</p><p style="margin: 8px 0 0 0; color: #666; font-size: 14px;">Prosim, preverite grafični gonilnik ali poskusite osvežiti stran.</p></div></div>';
 			}
 		}
-	}, []);
+		// Map initialization intentionally runs once; data updates use dedicated effects below.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		}, []);
 
-	// Update GeoJSON sources
+		// Update GeoJSON sources
 	useEffect(() => {
 		const map = mapInstanceRef.current;
 		if (!map) return;

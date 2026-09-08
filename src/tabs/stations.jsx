@@ -84,7 +84,9 @@ const loadLikedItems = (key) => {
 const saveLikedItems = (key, items) => {
 	try {
 		localStorage.setItem(key, JSON.stringify(items));
-	} catch {}
+	} catch {
+		// Storage may be unavailable in private browsing.
+	}
 };
 
 const StationsTab = ({ userLocation, setActiveStation, busStops, szStops }) => {
