@@ -85,9 +85,7 @@ const loadLikedItems = (key) => {
 const saveLikedItems = (key, items) => {
 	try {
 		localStorage.setItem(key, JSON.stringify(items));
-	} catch {
-		// Storage may be unavailable in private browsing.
-	}
+	} catch {}
 };
 
 const loadSearchTerm = () => {
@@ -165,7 +163,12 @@ const StationsTab = ({ userLocation, setActiveStation, busStops, szStops }) => {
 
 	// Get unique station ID for liking
 	const getStationId = useCallback((station) => {
-		return station?.ref_id || station?.gtfs_id || station?.ijpp_id || station?.stopId;
+		return (
+			station?.ref_id ||
+			station?.gtfs_id ||
+			station?.ijpp_id ||
+			station?.stopId
+		);
 	}, []);
 
 	const isStationLiked = useCallback(

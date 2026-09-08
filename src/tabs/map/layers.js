@@ -22,8 +22,8 @@ export const BRAND_COLOR_EXPR = [
 	BRAND_COLORS.marprom.stroke,
 	"murska",
 	BRAND_COLORS.arriva.stroke,
-    "kranj",
-    BRAND_COLORS.marprom.stroke,
+	"kranj",
+	BRAND_COLORS.marprom.stroke,
 	BRAND_COLORS.default.stroke,
 ];
 
@@ -306,9 +306,7 @@ export function setupSourcesAndLayers(map, dataBySource) {
 
 export function updateSourceData(map, id, data) {
 	const source = map.getSource(id);
-	if (!source?.setData || source.__v0Data === data) return;
-	source.__v0Data = data;
-	source.setData(data);
+	if (source && source.setData) source.setData(data);
 }
 
 export function setPrefixVisible(map, prefix, visible) {
@@ -320,7 +318,10 @@ export function setPrefixVisible(map, prefix, visible) {
 		`${prefix}-halo`,
 	];
 	layers.forEach((layerId) => {
-		if (map.getLayer(layerId) && map.getLayoutProperty(layerId, "visibility") !== vis) {
+		if (
+			map.getLayer(layerId) &&
+			map.getLayoutProperty(layerId, "visibility") !== vis
+		) {
 			map.setLayoutProperty(layerId, "visibility", vis);
 		}
 	});
