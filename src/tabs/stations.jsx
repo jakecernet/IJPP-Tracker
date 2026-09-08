@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback, memo, useEffect, useRef } from "react";
-import { Bus, Train, Heart } from "lucide-react";
+import { Heart, BusFrontIcon, TrainFrontIcon } from "lucide-react";
 import { VariableSizeList as List } from "react-window";
 
 const LIKED_STATIONS_KEY = "likedStations";
@@ -11,9 +11,9 @@ const StationItem = memo(
 			<div className="station-content">
 				<div className="name">
 					{station?.type === "sz" ? (
-						<Train size={24} />
+						<TrainFrontIcon size={24} />
 					) : (
-						<Bus size={24} />
+						<BusFrontIcon size={24} />
 					)}
 					<h3>{station?.name}</h3>
 					{station?.vCenter !== null && station?.type !== "sz" && (
@@ -165,7 +165,7 @@ const StationsTab = ({ userLocation, setActiveStation, busStops, szStops }) => {
 
 	// Get unique station ID for liking
 	const getStationId = useCallback((station) => {
-		return station?.ref_id || station?.gtfs_id || station?.ijpp_id;
+		return station?.ref_id || station?.gtfs_id || station?.ijpp_id || station?.stopId;
 	}, []);
 
 	const isStationLiked = useCallback(
