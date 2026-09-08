@@ -132,11 +132,12 @@ const ArrivalItem = memo(({ arrival, onRouteClick }) => (
 		</p>
 		{arrival.type === "SZ" && arrival.realTime && (
 			<p>
-				{"Zamuda: " +
-					formatDelay(
-						arrival.scheduledDeparture,
-						arrival.realtimeDeparture,
-					)}
+				Zamuda:
+				<br></br>
+				{formatDelay(
+					arrival.scheduledDeparture,
+					arrival.realtimeDeparture,
+				)}
 			</p>
 		)}
 	</div>

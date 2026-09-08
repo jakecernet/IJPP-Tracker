@@ -828,7 +828,7 @@ const fetchLppArrivals = async (stationCode) => {
 					vehicleId: arrival.vehicle_id,
 					type: arrival.type,
 					depot: arrival.depot,
-                    operatorName: "Ljubljanski potniški promet d.o.o.",
+					operatorName: "Ljubljanski potniški promet d.o.o.",
 				};
 			})
 			.sort((a, b) => (a.etaMinutes ?? 999) - (b.etaMinutes ?? 999));
@@ -899,7 +899,10 @@ const fetchSzArrivals = async (stationCode) => {
 		return (raw?.stopTimes || [])
 			.filter((arrival) => {
 				const scheduledDeparture = arrival?.place?.scheduledDeparture;
-				return scheduledDeparture?.split("T")[0] === tomorrow;
+				return (
+					scheduledDeparture?.split("T")[0] === today ||
+					scheduledDeparture?.split("T")[0] === tomorrow
+				);
 			})
 			.map((arrival) => {
 				const place = arrival?.place;
@@ -942,7 +945,7 @@ const fetchSzArrivals = async (stationCode) => {
 					departureDelay,
 					etaMinutes: etaData.etaMinutes,
 					arrivalTime: etaData.arrivalTime,
-                    operatorName: "Slovenske železnice d.o.o.",
+					operatorName: "Slovenske železnice, d.o.o.",
 				};
 			});
 	} catch (error) {
