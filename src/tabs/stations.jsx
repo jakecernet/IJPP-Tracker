@@ -38,7 +38,7 @@ const StationItem = memo(
 						</span>
 					)}
 				</div>
-                <br></br>
+				<br></br>
 				<ul className="station-info">
 					{station?.routes_on_stop
 						?.slice(0, 6)
@@ -165,7 +165,7 @@ const StationsTab = ({ userLocation, setActiveStation, busStops, szStops }) => {
 
 	// Get unique station ID for liking
 	const getStationId = useCallback((station) => {
-		return station?.ref_id || station?.id || station?.name;
+		return station?.ref_id || station?.gtfs_id || station?.ijpp_id;
 	}, []);
 
 	const isStationLiked = useCallback(
@@ -208,21 +208,7 @@ const StationsTab = ({ userLocation, setActiveStation, busStops, szStops }) => {
 			.sort((a, b) => a.distance - b.distance);
 	}, [allStations, debouncedSearchTerm, radius]);
 
-		// If a name is not available within the configured radius, offer the closest
-		// matching station from the complete stop list instead of showing no result.
-		const closestMatchingStation = useMemo(() => {
-			if (!debouncedSearchTerm.trim() || nearMeStations.length > 0) return null;
-
-			const normalizedSearch = debouncedSearchTerm.trim().toLowerCase();
-			return allStations
-				.filter((stop) =>
-					stop.name?.toLowerCase().includes(normalizedSearch),
-				)
-				.sort((a, b) => a.distance - b.distance)[0] || null;
-		}, [allStations, debouncedSearchTerm, nearMeStations.length]);
-
-		// Filtered stations for "All"
-		const filteredAllStations = useMemo(() => {
+	const filteredAllStations = useMemo(() => {
 		if (debouncedSearchTerm.length < 3) return [];
 		return allStations
 			.filter((stop) =>
@@ -233,7 +219,6 @@ const StationsTab = ({ userLocation, setActiveStation, busStops, szStops }) => {
 			.sort((a, b) => a.name.localeCompare(b.name));
 	}, [allStations, debouncedSearchTerm]);
 
-	// Filtered stations for "Liked"
 	const filteredLikedStations = useMemo(() => {
 		return likedStations.filter((liked) =>
 			liked.name
@@ -398,30 +383,12 @@ const StationsTab = ({ userLocation, setActiveStation, busStops, szStops }) => {
 			<div className="results station-list" ref={listContainerRef}>
 				{page === "nearMe" && (
 					<>
-							{nearMeStations.length === 0 && closestMatchingStation && (
-								<>
-									<p className="empty-message">
-										Ni postaj v bližini. Najbližje ujemanje:
-									</p>
-									<StationItem
-										station={closestMatchingStation}
-										isLiked={isStationLiked(closestMatchingStation)}
-										onToggleLike={(e) =>
-											toggleLikeStation(closestMatchingStation, e)
-										}
-										onSelect={() =>
-											handleStationSelect(closestMatchingStation)
-										}
-										showDistance={true}
-									/>
-								</>
-							)}
-							{nearMeStations.length === 0 && !closestMatchingStation && (
-								<p className="empty-message">
-									Ni postaj v bližini.
-								</p>
-							)}
-							{nearMeStations.length > 0 && (
+						{nearMeStations.length === 0 && (
+							<p className="empty-message">
+								Ni postaj v bližini.
+							</p>
+						)}
+						{nearMeStations.length > 0 && (
 							<List
 								ref={nearMeListRef}
 								height={listHeight}
@@ -498,7 +465,7 @@ const StationsTab = ({ userLocation, setActiveStation, busStops, szStops }) => {
 												onSelect={() =>
 													handleStationSelect(station)
 												}
-												showDistance={false}
+												showDistance={true}
 											/>
 										</div>
 									);
@@ -544,7 +511,7 @@ const StationsTab = ({ userLocation, setActiveStation, busStops, szStops }) => {
 														liked.data,
 													)
 												}
-												showDistance={false}
+												showDistance={true}
 											/>
 										</div>
 									);

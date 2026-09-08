@@ -66,10 +66,6 @@ const DEFAULT_BUS_OPERATORS = {
 	generic: true,
 };
 
-// Prebere shranjene nastavitve plasti (avtobusi/vlaki/postaje) iz localStorage.
-// Robustno: če je shramba poškodovana, manjkajo posamezni ključi, ali gre za
-// star (flat) format iz prejšnje verzije aplikacije, se manjkajoči/neveljavni
-// podatki tiho dopolnijo z defaulti namesto da se cela nastavitev zavrže.
 function loadMapLayerSettings() {
 	let saved = null;
 	try {
@@ -82,11 +78,8 @@ function loadMapLayerSettings() {
 	const isPlainObject = (v) =>
 		v && typeof v === "object" && !Array.isArray(v);
 
-	// Stara verzija je nastavitve plasti shranjevala neposredno (brez "visibility" wrapperja)
 	const legacyVisibility =
-		isPlainObject(saved) && saved.visibility === undefined
-			? saved
-			: null;
+		isPlainObject(saved) && saved.visibility === undefined ? saved : null;
 
 	const visibilitySource = isPlainObject(saved?.visibility)
 		? saved.visibility
@@ -238,7 +231,8 @@ function App() {
 					...(Array.isArray(ijpp) ? ijpp : []),
 				]);
 			} catch (error) {
-				if (!disposed) console.error("Error fetching positions:", error);
+				if (!disposed)
+					console.error("Error fetching positions:", error);
 			} finally {
 				requestInFlight = false;
 			}
@@ -252,7 +246,8 @@ function App() {
 		};
 		const startPolling = () => {
 			stopPolling();
-			if (!document.hidden) intervalId = setInterval(fetchPositions, 3000);
+			if (!document.hidden)
+				intervalId = setInterval(fetchPositions, 3000);
 		};
 		const handleVisibilityChange = () => {
 			if (document.hidden) stopPolling();
@@ -268,7 +263,10 @@ function App() {
 		return () => {
 			disposed = true;
 			stopPolling();
-			document.removeEventListener("visibilitychange", handleVisibilityChange);
+			document.removeEventListener(
+				"visibilitychange",
+				handleVisibilityChange,
+			);
 		};
 	}, [isOnMapTab]);
 
@@ -283,9 +281,16 @@ function App() {
 			requestInFlight = true;
 			try {
 				const data = await fetchTrainPositions();
-				if (!disposed) tripsWithTimingRef.current = Array.isArray(data) ? data : [];
+				if (!disposed)
+					tripsWithTimingRef.current = Array.isArray(data)
+						? data
+						: [];
 			} catch (error) {
-				if (!disposed) console.error("Error fetching train trips for animation:", error);
+				if (!disposed)
+					console.error(
+						"Error fetching train trips for animation:",
+						error,
+					);
 			} finally {
 				requestInFlight = false;
 			}
@@ -299,7 +304,10 @@ function App() {
 		return () => {
 			disposed = true;
 			clearInterval(intervalId);
-			document.removeEventListener("visibilitychange", onVisibilityChange);
+			document.removeEventListener(
+				"visibilitychange",
+				onVisibilityChange,
+			);
 		};
 	}, [isOnMapTab]);
 
@@ -343,7 +351,7 @@ function App() {
 		};
 	}, [isOnMapTab]);
 
-    // fetchanje in updejtanje prihodov
+	// fetchanje in updejtanje prihodov
 	const fetchAndUpdateArrivals = useCallback(async () => {
 		const lppId = activeStation?.ref_id || activeStation?.station_code;
 		const ijppId = activeStation?.gtfs_id;
@@ -498,18 +506,18 @@ function App() {
 		);
 	}, [selectedVehicle, getTripFromId]);
 
-	// neki počist
+	// neki počisti
 	const clearSelectedVehicle = useCallback(
 		() => setSelectedVehicle(null),
 		[],
 	);
 
 	return (
-			<Router>
-				<RouteTracker
-					onMapChange={setIsOnMapTab}
-					onLinesChange={setIsOnLinesTab}
-				/>
+		<Router>
+			<RouteTracker
+				onMapChange={setIsOnMapTab}
+				onLinesChange={setIsOnLinesTab}
+			/>
 			<div className={`container ${theme}`}>
 				<div className="content">
 					<div
@@ -571,7 +579,7 @@ function App() {
 										szArrivals={szArrivals}
 										getTripFromId={getTripFromId}
 										arrivalsLoading={arrivalsLoading}
-                                        trainPositions={trainPositions}
+										trainPositions={trainPositions}
 									/>
 								}
 							/>

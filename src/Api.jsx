@@ -167,7 +167,6 @@ function computeEtaAndTime(arrival) {
 		actualDate = null;
 	}
 
-	// Generate ETA if missing
 	if (etaMin === undefined && actualDate) {
 		const now = new Date();
 		etaMin = Math.max(
@@ -176,7 +175,6 @@ function computeEtaAndTime(arrival) {
 		);
 	}
 
-	// Generate actual time if missing
 	if (!actualDate && etaMin !== undefined) {
 		actualDate = new Date(new Date().getTime() + etaMin * 60000);
 	}
@@ -269,7 +267,6 @@ export function decodePolylineToPoints(str, precision) {
 		const alt = decodePolylineOnce(str, precision + 1);
 		if (alt[0] && isValidCoord(alt[0])) pts = alt;
 	}
-	// Filter to valid coordinate range just in case
 	return pts.filter(isValidCoord);
 }
 
