@@ -3,6 +3,7 @@ import { Bus, Train, Heart } from "lucide-react";
 import { VariableSizeList as List } from "react-window";
 
 const LIKED_STATIONS_KEY = "likedStations";
+const STATION_SEARCH_KEY = "stationSearchTerm";
 
 const StationItem = memo(
 	({ station, onSelect, isLiked, onToggleLike, showDistance }) => (
@@ -89,8 +90,16 @@ const saveLikedItems = (key, items) => {
 	}
 };
 
+const loadSearchTerm = () => {
+	try {
+		return localStorage.getItem(STATION_SEARCH_KEY) || "";
+	} catch {
+		return "";
+	}
+};
+
 const StationsTab = ({ userLocation, setActiveStation, busStops, szStops }) => {
-	const [searchTerm, setSearchTerm] = useState("");
+	const [searchTerm, setSearchTerm] = useState(loadSearchTerm);
 	const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
 	const [page, setPage] = useState("nearMe"); // nearMe, all, liked
 	const [likedStations, setLikedStations] = useState(() =>
@@ -100,6 +109,14 @@ const StationsTab = ({ userLocation, setActiveStation, busStops, szStops }) => {
 		const stored = localStorage.getItem("stationRadius");
 		return stored ? JSON.parse(stored) : { busRadius: 5, szRadius: 20 };
 	});
+
+	useEffect(() => {
+		try {
+			localStorage.setItem(STATION_SEARCH_KEY, searchTerm);
+		} catch {
+			// Storage may be unavailable in private browsing.
+		}
+	}, [searchTerm]);
 
 	// Debounce search term for better performance
 	useEffect(() => {
