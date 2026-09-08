@@ -1,8 +1,9 @@
 import { useState, useMemo, useCallback, memo, useEffect, useRef } from "react";
-import { Bus, Train, Heart } from "lucide-react";
+import { Heart, BusFrontIcon, TrainFrontIcon } from "lucide-react";
 import { VariableSizeList as List } from "react-window";
 
 const LIKED_STATIONS_KEY = "likedStations";
+const STATION_SEARCH_KEY = "stationSearchTerm";
 
 const StationItem = memo(
 	({ station, onSelect, isLiked, onToggleLike, showDistance }) => (
@@ -10,9 +11,9 @@ const StationItem = memo(
 			<div className="station-content">
 				<div className="name">
 					{station?.type === "sz" ? (
-						<Train size={24} />
+						<TrainFrontIcon size={24} />
 					) : (
-						<Bus size={24} />
+						<BusFrontIcon size={24} />
 					)}
 					<h3>{station?.name}</h3>
 					{station?.vCenter !== null && station?.type !== "sz" && (
@@ -37,7 +38,7 @@ const StationItem = memo(
 						</span>
 					)}
 				</div>
-                <br></br>
+				<br></br>
 				<ul className="station-info">
 					{station?.routes_on_stop
 						?.slice(0, 6)
@@ -84,11 +85,21 @@ const loadLikedItems = (key) => {
 const saveLikedItems = (key, items) => {
 	try {
 		localStorage.setItem(key, JSON.stringify(items));
-	} catch {}
+	} catch {
+		// Storage may be unavailable in private browsing.
+	}
+};
+
+const loadSearchTerm = () => {
+	try {
+		return localStorage.getItem(STATION_SEARCH_KEY) || "";
+	} catch {
+		return "";
+	}
 };
 
 const StationsTab = ({ userLocation, setActiveStation, busStops, szStops }) => {
-	const [searchTerm, setSearchTerm] = useState("");
+	const [searchTerm, setSearchTerm] = useState(loadSearchTerm);
 	const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
 	const [page, setPage] = useState("nearMe"); // nearMe, all, liked
 	const [likedStations, setLikedStations] = useState(() =>
@@ -98,6 +109,14 @@ const StationsTab = ({ userLocation, setActiveStation, busStops, szStops }) => {
 		const stored = localStorage.getItem("stationRadius");
 		return stored ? JSON.parse(stored) : { busRadius: 5, szRadius: 20 };
 	});
+
+	useEffect(() => {
+		try {
+			localStorage.setItem(STATION_SEARCH_KEY, searchTerm);
+		} catch {
+			// Storage may be unavailable in private browsing.
+		}
+	}, [searchTerm]);
 
 	// Debounce search term for better performance
 	useEffect(() => {
@@ -146,7 +165,7 @@ const StationsTab = ({ userLocation, setActiveStation, busStops, szStops }) => {
 
 	// Get unique station ID for liking
 	const getStationId = useCallback((station) => {
-		return station?.ref_id || station?.id || station?.name;
+		return station?.ref_id || station?.gtfs_id || station?.ijpp_id || station?.stopId;
 	}, []);
 
 	const isStationLiked = useCallback(
@@ -189,7 +208,6 @@ const StationsTab = ({ userLocation, setActiveStation, busStops, szStops }) => {
 			.sort((a, b) => a.distance - b.distance);
 	}, [allStations, debouncedSearchTerm, radius]);
 
-	// Filtered stations for "All"
 	const filteredAllStations = useMemo(() => {
 		if (debouncedSearchTerm.length < 3) return [];
 		return allStations
@@ -201,7 +219,6 @@ const StationsTab = ({ userLocation, setActiveStation, busStops, szStops }) => {
 			.sort((a, b) => a.name.localeCompare(b.name));
 	}, [allStations, debouncedSearchTerm]);
 
-	// Filtered stations for "Liked"
 	const filteredLikedStations = useMemo(() => {
 		return likedStations.filter((liked) =>
 			liked.name
@@ -448,7 +465,7 @@ const StationsTab = ({ userLocation, setActiveStation, busStops, szStops }) => {
 												onSelect={() =>
 													handleStationSelect(station)
 												}
-												showDistance={false}
+												showDistance={true}
 											/>
 										</div>
 									);
@@ -494,7 +511,7 @@ const StationsTab = ({ userLocation, setActiveStation, busStops, szStops }) => {
 														liked.data,
 													)
 												}
-												showDistance={false}
+												showDistance={true}
 											/>
 										</div>
 									);

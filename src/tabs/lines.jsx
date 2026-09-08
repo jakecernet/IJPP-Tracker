@@ -111,14 +111,7 @@ const ArrivalItem = memo(({ arrival, onRouteClick }) => (
 		onClick={() => onRouteClick(arrival, arrival.type)}>
 		<div className="left">
 			<div className="circle" style={{ background: bgColorMap(arrival) }}>
-				<h2
-					className={
-						arrival.type === "SZ"
-							? "sz"
-							: arrival.type === "LPP"
-								? "lpp"
-								: ""
-					}>
+				<h2 className={arrival.type === "SZ" ? "sz" : ""}>
 					{arrival.type === "LPP"
 						? arrival.routeName
 						: arrival.routeShortName || arrival.tripName}
@@ -139,11 +132,12 @@ const ArrivalItem = memo(({ arrival, onRouteClick }) => (
 		</p>
 		{arrival.type === "SZ" && arrival.realTime && (
 			<p>
-				{"Zamuda: " +
-					formatDelay(
-						arrival.scheduledDeparture,
-						arrival.realtimeDeparture,
-					)}
+				Zamuda:
+				<br></br>
+				{formatDelay(
+					arrival.scheduledDeparture,
+					arrival.realtimeDeparture,
+				)}
 			</p>
 		)}
 	</div>
@@ -188,7 +182,6 @@ const LinesTab = ({
 		return () => clearTimeout(timer);
 	}, [searchTerm]);
 
-	// Fetch LPP routes
 	useEffect(() => {
 		const fetchLppRoutes = async () => {
 			try {
@@ -206,7 +199,7 @@ const LinesTab = ({
 
 	// Get unique station ID for liking
 	const getStationId = useCallback((station) => {
-		return station?.ref_id || station?.id || station?.name;
+		return station?.ref_id || station?.gtfs_id || station?.ijpp_id;
 	}, []);
 
 	const isCurrentStationLiked = useCallback(() => {

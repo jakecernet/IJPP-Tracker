@@ -14,7 +14,7 @@ import {
 	Route,
 	useLocation,
 } from "react-router-dom";
-import { Map, BusFront, Route as RouteIcon, Settings2 } from "lucide-react";
+import { Map, Route as RouteIcon, Settings2, TramFront } from "lucide-react";
 import "./App.css";
 
 import {
@@ -37,6 +37,18 @@ const StationsTab = lazy(() => import("./tabs/stations"));
 const LinesTab = lazy(() => import("./tabs/lines"));
 const SettingsTab = lazy(() => import("./tabs/settings"));
 
+function RouteTracker({ onMapChange, onLinesChange }) {
+	const location = useLocation();
+
+	useEffect(() => {
+		const path = location.pathname;
+		onMapChange(path === "/" || path === "/map" || path === "");
+		onLinesChange(path === "/lines");
+	}, [location.pathname, onMapChange, onLinesChange]);
+
+	return null;
+}
+
 const DEFAULT_VISIBILITY = {
 	buses: true,
 	busStops: true,
@@ -54,10 +66,6 @@ const DEFAULT_BUS_OPERATORS = {
 	generic: true,
 };
 
-// Prebere shranjene nastavitve plasti (avtobusi/vlaki/postaje) iz localStorage.
-// Robustno: če je shramba poškodovana, manjkajo posamezni ključi, ali gre za
-// star (flat) format iz prejšnje verzije aplikacije, se manjkajoči/neveljavni
-// podatki tiho dopolnijo z defaulti namesto da se cela nastavitev zavrže.
 function loadMapLayerSettings() {
 	let saved = null;
 	try {
@@ -70,11 +78,8 @@ function loadMapLayerSettings() {
 	const isPlainObject = (v) =>
 		v && typeof v === "object" && !Array.isArray(v);
 
-	// Stara verzija je nastavitve plasti shranjevala neposredno (brez "visibility" wrapperja)
 	const legacyVisibility =
-		isPlainObject(saved) && saved.visibility === undefined
-			? saved
-			: null;
+		isPlainObject(saved) && saved.visibility === undefined ? saved : null;
 
 	const visibilitySource = isPlainObject(saved?.visibility)
 		? saved.visibility
@@ -206,54 +211,57 @@ function App() {
 	}, []);
 
 	useEffect(() => {
+		if (!isOnMapTab) return;
+
+		let disposed = false;
+		let requestInFlight = false;
+		let intervalId = null;
+
 		const fetchPositions = async () => {
+			if (disposed || document.hidden || requestInFlight) return;
+			requestInFlight = true;
 			try {
 				const [lpp, ijpp] = await Promise.all([
 					fetchLPPPositions(),
 					fetchIJPPPositions(),
 				]);
-
-				const lppPositions = Array.isArray(lpp) ? lpp : [];
-				const ijppPositions = Array.isArray(ijpp) ? ijpp : [];
-
-				setGpsPositions([...lppPositions, ...ijppPositions]);
+				if (disposed) return;
+				setGpsPositions([
+					...(Array.isArray(lpp) ? lpp : []),
+					...(Array.isArray(ijpp) ? ijpp : []),
+				]);
 			} catch (error) {
-				console.error("Error fetching positions:", error);
+				if (!disposed)
+					console.error("Error fetching positions:", error);
+			} finally {
+				requestInFlight = false;
 			}
 		};
 
-		if (!isOnMapTab) {
-			return;
-		}
-
-		fetchPositions();
-
-		let intervalId;
-
-		const startPolling = () => {
-			intervalId = setInterval(fetchPositions, 3000);
-		};
-
 		const stopPolling = () => {
-			if (intervalId) {
+			if (intervalId !== null) {
 				clearInterval(intervalId);
 				intervalId = null;
 			}
 		};
-
+		const startPolling = () => {
+			stopPolling();
+			if (!document.hidden)
+				intervalId = setInterval(fetchPositions, 3000);
+		};
 		const handleVisibilityChange = () => {
-			if (document.hidden) {
-				stopPolling();
-			} else {
+			if (document.hidden) stopPolling();
+			else {
 				fetchPositions();
 				startPolling();
 			}
 		};
 
+		fetchPositions();
 		document.addEventListener("visibilitychange", handleVisibilityChange);
 		startPolling();
-
 		return () => {
+			disposed = true;
 			stopPolling();
 			document.removeEventListener(
 				"visibilitychange",
@@ -266,21 +274,41 @@ function App() {
 	useEffect(() => {
 		if (!isOnMapTab) return;
 
+		let disposed = false;
+		let requestInFlight = false;
 		const fetchTrains = async () => {
+			if (disposed || document.hidden || requestInFlight) return;
+			requestInFlight = true;
 			try {
 				const data = await fetchTrainPositions();
-				tripsWithTimingRef.current = data;
+				if (!disposed)
+					tripsWithTimingRef.current = Array.isArray(data)
+						? data
+						: [];
 			} catch (error) {
-				console.error(
-					"Error fetching train trips for animation:",
-					error,
-				);
+				if (!disposed)
+					console.error(
+						"Error fetching train trips for animation:",
+						error,
+					);
+			} finally {
+				requestInFlight = false;
 			}
 		};
-
-		fetchTrains();
 		const intervalId = setInterval(fetchTrains, 30000);
-		return () => clearInterval(intervalId);
+		const onVisibilityChange = () => {
+			if (!document.hidden) fetchTrains();
+		};
+		fetchTrains();
+		document.addEventListener("visibilitychange", onVisibilityChange);
+		return () => {
+			disposed = true;
+			clearInterval(intervalId);
+			document.removeEventListener(
+				"visibilitychange",
+				onVisibilityChange,
+			);
+		};
 	}, [isOnMapTab]);
 
 	// black magic za animacijo vlakov
@@ -323,7 +351,7 @@ function App() {
 		};
 	}, [isOnMapTab]);
 
-    // fetchanje in updejtanje prihodov
+	// fetchanje in updejtanje prihodov
 	const fetchAndUpdateArrivals = useCallback(async () => {
 		const lppId = activeStation?.ref_id || activeStation?.station_code;
 		const ijppId = activeStation?.gtfs_id;
@@ -478,22 +506,7 @@ function App() {
 		);
 	}, [selectedVehicle, getTripFromId]);
 
-	// tracka če je na zemljevidu al na linijah
-	const RouteTracker = useCallback(() => {
-		const location = useLocation();
-
-		useEffect(() => {
-			const path = location.pathname;
-			const onMap = path === "/" || path === "/map" || path === "";
-			const onLines = path === "/lines";
-			setIsOnMapTab(onMap);
-			setIsOnLinesTab(onLines);
-		}, [location.pathname]);
-
-		return null;
-	}, []);
-
-	// neki počist
+	// neki počisti
 	const clearSelectedVehicle = useCallback(
 		() => setSelectedVehicle(null),
 		[],
@@ -501,7 +514,10 @@ function App() {
 
 	return (
 		<Router>
-			<RouteTracker />
+			<RouteTracker
+				onMapChange={setIsOnMapTab}
+				onLinesChange={setIsOnLinesTab}
+			/>
 			<div className={`container ${theme}`}>
 				<div className="content">
 					<div
@@ -563,7 +579,7 @@ function App() {
 										szArrivals={szArrivals}
 										getTripFromId={getTripFromId}
 										arrivalsLoading={arrivalsLoading}
-                                        trainPositions={trainPositions}
+										trainPositions={trainPositions}
 									/>
 								}
 							/>
@@ -592,7 +608,7 @@ function App() {
 					</NavLink>
 					<NavLink to="/stations" onClick={clearSelectedVehicle}>
 						<button>
-							<BusFront size={24} />
+							<TramFront size={24} />
 							<h3>Postaje</h3>
 						</button>
 					</NavLink>

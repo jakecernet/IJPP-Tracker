@@ -167,7 +167,6 @@ function computeEtaAndTime(arrival) {
 		actualDate = null;
 	}
 
-	// Generate ETA if missing
 	if (etaMin === undefined && actualDate) {
 		const now = new Date();
 		etaMin = Math.max(
@@ -176,7 +175,6 @@ function computeEtaAndTime(arrival) {
 		);
 	}
 
-	// Generate actual time if missing
 	if (!actualDate && etaMin !== undefined) {
 		actualDate = new Date(new Date().getTime() + etaMin * 60000);
 	}
@@ -269,7 +267,6 @@ export function decodePolylineToPoints(str, precision) {
 		const alt = decodePolylineOnce(str, precision + 1);
 		if (alt[0] && isValidCoord(alt[0])) pts = alt;
 	}
-	// Filter to valid coordinate range just in case
 	return pts.filter(isValidCoord);
 }
 
@@ -831,7 +828,7 @@ const fetchLppArrivals = async (stationCode) => {
 					vehicleId: arrival.vehicle_id,
 					type: arrival.type,
 					depot: arrival.depot,
-                    operatorName: "Ljubljanski potniški promet d.o.o.",
+					operatorName: "Ljubljanski potniški promet d.o.o.",
 				};
 			})
 			.sort((a, b) => (a.etaMinutes ?? 999) - (b.etaMinutes ?? 999));
@@ -902,7 +899,10 @@ const fetchSzArrivals = async (stationCode) => {
 		return (raw?.stopTimes || [])
 			.filter((arrival) => {
 				const scheduledDeparture = arrival?.place?.scheduledDeparture;
-				return scheduledDeparture?.split("T")[0] === tomorrow;
+				return (
+					scheduledDeparture?.split("T")[0] === today ||
+					scheduledDeparture?.split("T")[0] === tomorrow
+				);
 			})
 			.map((arrival) => {
 				const place = arrival?.place;
@@ -945,7 +945,7 @@ const fetchSzArrivals = async (stationCode) => {
 					departureDelay,
 					etaMinutes: etaData.etaMinutes,
 					arrivalTime: etaData.arrivalTime,
-                    operatorName: "Slovenske železnice d.o.o.",
+					operatorName: "Slovenske železnice, d.o.o.",
 				};
 			});
 	} catch (error) {

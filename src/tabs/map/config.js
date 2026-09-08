@@ -11,35 +11,12 @@ import szPNG from "../../img/sz.png";
 export const DEFAULT_CENTER = [46.0569, 14.5058];
 export const DEFAULT_ZOOM = 13;
 
-export const OSM_RASTER_STYLE_DARK = {
+export const OSM_STYLE_LIGHT = {
 	version: 8,
 	sources: {
 		osm: {
 			type: "raster",
-			tiles: [
-				"https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png",
-				"https://b.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png",
-				"https://c.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png",
-			],
-			tileSize: 256,
-			attribution:
-				'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
-		},
-	},
-	glyphs: "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
-	layers: [{ id: "osm", type: "raster", source: "osm" }],
-};
-
-export const OSM_RASTER_STYLE_LIGHT = {
-	version: 8,
-	sources: {
-		osm: {
-			type: "raster",
-			tiles: [
-				"https://a.tile.openstreetmap.org/{z}/{x}/{y}.png",
-				"https://b.tile.openstreetmap.org/{z}/{x}/{y}.png",
-				"https://c.tile.openstreetmap.org/{z}/{x}/{y}.png",
-			],
+			tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
 			tileSize: 256,
 			attribution:
 				'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -47,20 +24,22 @@ export const OSM_RASTER_STYLE_LIGHT = {
 	},
 	glyphs: "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf",
 	layers: [{ id: "osm", type: "raster", source: "osm" }],
-};
+}; 
+
+export const OSM_STYLE_DARK = "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json?key=cb1_31r1_1_de984037cd54e589a6e6ce68";
 
 export const ICON_SOURCES = [
-    { id: "bus-stop", image: busStopPNG },
-    { id: "train-stop", image: trainStopPNG },
-    { id: "train", image: szPNG },
-    { id: "arriva", image: arrivaPNG },
-    { id: "lpp", image: lppPNG },
-    { id: "nomago", image: nomagoPNG },
-    { id: "marprom", image: marpromPNG },
-    { id: "murska", image: murskaPNG },
-    { id: "kranj", image: kranjPNG },
-    { id: "bus-generic", image: busStopPNG },
-    { id: "train-generic", image: szPNG },
+	{ id: "bus-stop", image: busStopPNG },
+	{ id: "train-stop", image: trainStopPNG },
+	{ id: "train", image: szPNG },
+	{ id: "arriva", image: arrivaPNG },
+	{ id: "lpp", image: lppPNG },
+	{ id: "nomago", image: nomagoPNG },
+	{ id: "marprom", image: marpromPNG },
+	{ id: "murska", image: murskaPNG },
+	{ id: "kranj", image: kranjPNG },
+	{ id: "bus-generic", image: busStopPNG },
+	{ id: "train-generic", image: szPNG },
 ];
 
 export const CLUSTER_CONFIG = {
@@ -142,15 +121,15 @@ export const BRAND_COLORS = {
 };
 
 export const operatorToIcon = {
-    "Ljubljanski potniški promet d.o.o.": "lpp",
-    "Ljubljanski potniški promet, d.o.o.": "lpp",
-    "Nomago d.o.o.": "nomago",
-    "Arriva d.o.o.": "arriva",
-    Marprom: "marprom",
-    "AP Murska Sobota, d.d.": "murska",
-    "Avtobusni promet Murska Sobota d.d.": "murska",
-    "MP_Kranj": "kranj",
-    "SŽ - Potniški promet, d.o.o.": "sz",
+	"Ljubljanski potniški promet d.o.o.": "lpp",
+	"Ljubljanski potniški promet, d.o.o.": "lpp",
+	"Nomago d.o.o.": "nomago",
+	"Arriva d.o.o.": "arriva",
+	Marprom: "marprom",
+	"AP Murska Sobota, d.d.": "murska",
+	"Avtobusni promet Murska Sobota d.d.": "murska",
+	MP_Kranj: "kranj",
+	"SŽ - Potniški promet, d.o.o.": "sz",
 };
 
 export const HALO_RADIUS = [
